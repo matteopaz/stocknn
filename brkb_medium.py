@@ -1,10 +1,8 @@
 import helpers
 import torch
 from torch import nn
-# brkb_train_sixmo = helpers.load("./training/brkb_train_sixmo")
-# brkb_test_sixmo = helpers.load("./training/brkb_test_sixmo")
-brkb_train_week = helpers.load("./training/brkb_train_week_raw")
-brkb_test_week = helpers.load("./training/brkb_test_week")
+
+brkb = helpers.load("./training/brkb_train_week")
 
 # hyperparams
 
@@ -27,7 +25,7 @@ class LSTM1(nn.Module):
     def forward(self, x):
         h0 = torch.zeros(self.num_layers, x.size(1), self.hidden_size, dtype=torch.float32).requires_grad_()
         c0 = torch.zeros(self.num_layers, x.size(1), self.hidden_size, dtype=torch.float32).requires_grad_()
-        print()
+
         out, _ = self.lstm(x, (h0, c0))
         out = out[-1, :, :] # (seq, batch, hidden) -> (batch, hidden)
         out = self.fc(out)
@@ -45,8 +43,10 @@ optimizer = torch.optim.Adam(rmodel1.parameters(), lr=0.01)
 
 
 for epoch in range(1):
-
+    print(len(brkb_train_week))
     for i, (inp, actual) in enumerate(brkb_train_week):
+        if i > 200:
+            break
         y = actual[0][1].reshape(1,1) # get the close price
         optimizer.zero_grad()
         out = rmodel1(inp)
@@ -54,6 +54,6 @@ for epoch in range(1):
         loss_value.backward()
         optimizer.step()
     
-    if epoch % 100 == 0:
-        print("Epoch: ", epoch, "Loss: ", loss_value.item())
+    # if epoch % 100 == 0:
+    #     print("Epoch: ", epoch, "Loss: ", loss_value.item())
 

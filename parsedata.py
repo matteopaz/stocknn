@@ -58,19 +58,45 @@ def generate_dataset(raw, leave_out, shifting, prediction_distance, every=1):
 
     return (trainingset, testset)
 
+class SDataset(Dataset):
+
+    def __init__(self, raw, prediction_distance, every=1):
+        self.ts = []
+        for i in range(len(raw)):
+            high = raw["High"][i]
+            low = raw["Low"][i]
+            close = raw["Close"][i]
+            pricerange = high - low
+            self.ts.append([pricerange, close])
+
+        self.input_days = backmultiple * prediction_distance
+        self.prediction_distance = prediction_distance
+
+        self.inputs = []
+        self.labels = []
+
+        self.days = len(self.ts)
+    
+        for i in range(self.days - self.input_days - prediction_distance):
+            fromend = -(i+1)
+
+            label = torch.tensor(self.ts[fromend][1]).to(torch.float32) # only close
+            self.labels.append(label)
+
+            windowstart = fromend - self.prediction_distance - self.input_days
+            windowend = fromend - self.prediction_distance + 1
+
+            inp = torch.tensor(self.ts[windowstart:windowend: every]).to(torch.float32)
+            self.inputs.append(inp) 
+    
+    def __getitem__(self, index):
+        return (self.inputs[index], self.labels[index])
+    
+    def __len__(self):
+        return len(self.inputs)
+
+
 brkb = pandas.read_csv("./data/BRK-B.csv")
-# brkb_trainingset_sixmo_raw, brkb_testset_sixmo_raw = generate_dataset(brkb, 365, 1, 182)
-brkb_trainingset_week_raw, brkb_testset_week_raw = generate_dataset(brkb, 365, 1, 7)
 
-# brkb_train_sixmo = DataLoader(brkb_trainingset_sixmo_raw, batch_size=1, shuffle=False)
-# brkb_test_sixmo = DataLoader(brkb_testset_sixmo_raw, batch_size=1, shuffle=False)
-
-
-brkb_train_week = DataLoader(brkb_trainingset_week_raw, batch_size=10, shuffle=False)
-brkb_test_week = DataLoader(brkb_testset_week_raw, batch_size=10, shuffle=False)
-
-# save(brkb_train_sixmo, "./training/brkb_train_sixmo")
-# save(brkb_test_sixmo, "./training/brkb_test_sixmo")
-save(brkb_train_week, "./training/brkb_train_week")
-save(brkb_test_week, "./training/brkb_test_week")
-save(brkb_trainingset_week_raw, "./training/brkb_train_week_raw")
+brkb_train_week = SDataset(brkb, 7, 1)
+save(brkb_train_week, "./data/brkb_train_week.pkl")
