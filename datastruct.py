@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import numpy as np
 
-backmultiple = 8 # ############################# 
+backmultiple = 1 # ############################# 
 
 class SDataset(Dataset):
 

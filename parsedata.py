@@ -9,54 +9,6 @@ from datastruct import *
 # 1 year = 365 days
 # 3 years = 1095 days
 
-# def generate_dataset(raw, leave_out, shifting, prediction_distance, every=1):
-#     asset = {}
-#     asset['raw'] = raw
-#     asset['timeseries'] = []
-#     r = len(asset['raw'])
-#     for i in range(r):
-#         open = asset['raw']["Open"][i]
-#         high = asset['raw']["High"][i]
-#         low = asset['raw']["Low"][i]
-#         close = asset['raw']["Close"][i]
-#         pricerange = high - low
-#         asset['timeseries'].append([[pricerange, close]])
-#         # flatten brkb.timeseries
-#         # asset['flat_timeseries'] = torch.tensor([[item for sl in asset['timeseries'] for item in sl]]).transpose(0,1)
-
-#     input_days = backmultiple * prediction_distance
-
-#     trainingset = []
-#     testset = []
-#     days = len(asset['timeseries'])
-#     if days < input_days + prediction_distance + leave_out:
-#         raise Exception("Not enough data for this prediction distance and leave out")
-    
-#     for i in range(days - input_days - prediction_distance - leave_out):
-#         fromend_test = -(i+1)
-#         fromend_train = fromend_test - leave_out
-
-#         actual = torch.tensor(asset['timeseries'][fromend_train])
-#         actual = actual.to(torch.float32)
-
-#         inp = torch.tensor(asset['timeseries'][(fromend_train-prediction_distance-input_days):(fromend_train-prediction_distance + 1): every])
-#         inp = inp.to(torch.float32)
-        
-#         # inp = torch.tensor([[item for sl in bumpy_inp for item in sl]]).transpose(0,1)
-#         trainingset.append((inp, actual))
-
-#         actual_test = torch.tensor([asset['timeseries'][fromend_test]])
-#         actual_test = actual_test.to(torch.float32)
-
-#         inp_test = torch.tensor(asset['timeseries'][(fromend_test-prediction_distance-input_days):(fromend_test-prediction_distance + 1): every])
-#         inp_test = inp_test.to(torch.float32)
-#         # inp_test = torch.tensor([[item for sl in bumpy_inp_test for item in sl]]).transpose(0,1)
-#         testset.append((inp_test, actual_test))
-
-
-#     return (trainingset, testset)
-
-
 
 LEAVEOUTFORTEST = 365 # days
 brkb = pandas.read_csv("./data/BRK-B.csv")
