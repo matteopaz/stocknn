@@ -10,7 +10,7 @@ from datastruct import *
 # 3 years = 1095 days
 
 
-LEAVEOUTFORTEST = 365 # days
+LEAVEOUTFORTEST = 800 # days
 brkb = pandas.read_csv("./data/BRK-B.csv")
 
 

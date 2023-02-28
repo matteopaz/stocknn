@@ -20,7 +20,7 @@ def train(dataloader, model, optimizer, loss, epochs, print_every=100):
         epoch_loss = 0
         for batch in dataloader:
             inp = batch[0]
-            label = batch[1].reshape(len(inp), 1)
+            label = batch[1].reshape(len(inp), 1).cuda()
             i += 1
 
             optimizer.zero_grad()

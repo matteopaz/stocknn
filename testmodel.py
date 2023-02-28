@@ -8,10 +8,12 @@ weektestset = helpers.load("./training/brkb_test_week.pkl")
 weektestloader = DataLoader(weektestset, batch_size=1, drop_last=True)
 
 naive = LSTM1(input_size, hidden_size, 1, 1)
+naive.cuda()
 weekPrediction = LSTM1(input_size, hidden_size, 1, 1)
 
 weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt"))
 weekPrediction.eval()
+weekPrediction.cuda()
 
 def loss(modelfn, testloader):
     total_loss = 0
@@ -37,8 +39,8 @@ def positive_trading_profit(modelfn, testloader):
         if prediction > purchaseprice:
             total_profit += label - purchaseprice
 
-        if prediction < purchaseprice:
-            total_profit += purchaseprice - label
+        # if prediction < purchaseprice:
+        #     total_profit += purchaseprice - label
     return total_profit
 
 
