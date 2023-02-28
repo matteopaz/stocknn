@@ -59,6 +59,19 @@ for batch in weektrainloader:
     predy.append(out.item())
     naivey.append(naiveout.item())
 
+for batch in weektestloader:
+    x.append(i)
+    i += 1
+    inp = batch[0]
+    label = batch[1]
+    out = weekPrediction(inp)
+    naiveout = naive(inp)
+    y.append(label.item())
+    predy.append(out.item())
+    naivey.append(naiveout.item())
+
+plt.plot()
+plt.axvline(x = len(weektrainloader), color = 'b', label = 'axvline - full height')
 plt.plot(x, y, label="Actual", color="red")
 plt.plot(x, predy, label="Predicted", color="blue")
 plt.plot(x, naivey, label="Naive", color="green")

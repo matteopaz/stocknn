@@ -49,9 +49,9 @@ shortmodel = LSTM1(input_size, hidden_size, 1, 1)
 loss = torch.nn.MSELoss()
 optimizer = torch.optim.Adam(params=shortmodel.parameters(), lr=0.01)
 
-EPOCHS = 15
+EPOCHS = 1000
 
-helpers.train(trainloader, shortmodel, optimizer, loss, EPOCHS, print_every=1)
+# helpers.train(trainloader, shortmodel, optimizer, loss, EPOCHS, print_every=1)
 
 print("AFTER")
 

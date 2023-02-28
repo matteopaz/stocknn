@@ -34,7 +34,7 @@ def train(dataloader, model, optimizer, loss, epochs, print_every=100):
             first_loss = epoch_loss
 
         if epoch % print_every == 0:
-            print("Epoch: ", epoch, "Loss: ", round(epoch_loss), "Chg: ", round(epoch_loss - last_loss), "Net: ", round(epoch_loss - first_loss))
+            print("Epoch: ", epoch, "Loss: ", epoch_loss, "Chg: ", epoch_loss - last_loss, "Net: ", epoch_loss - first_loss)
         
         last_loss = epoch_loss
         

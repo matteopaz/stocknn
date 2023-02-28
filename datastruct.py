@@ -9,12 +9,21 @@ class SDataset(Dataset):
 
     def __init__(self, raw, prediction_distance, every=1):
         self.ts = []
+
+        
         for i in range(len(raw)):
             high = list(raw["High"])[i]
             low = list(raw["Low"])[i]
             close = list(raw["Close"])[i]
+            
             pricerange = high - low
             self.ts.append([pricerange, close])
+        
+        # normalize the data
+        self.ts = np.array(self.ts)
+        self.ts = (self.ts - self.ts.min(axis=0)) / (self.ts.max(axis=0) - self.ts.min(axis=0))
+        self.ts = self.ts.tolist()
+    
         self.ts = self.ts[::-1]
 
         self.input_days = backmultiple * prediction_distance

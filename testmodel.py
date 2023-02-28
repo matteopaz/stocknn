@@ -20,7 +20,7 @@ def loss(modelfn, testloader):
         label = batch[1].reshape(1, 1)
         out = modelfn(inp)
         lossval = (label.item() - out.item())**2
-        print(out.item(), label.item())
+        # print(out.item(), label.item())
         total_loss += lossval   
         # print("Model thinks: ", math.round(out), "Actual: ", math.round(label)s ")
     return total_loss
@@ -36,8 +36,11 @@ def positive_trading_profit(modelfn, testloader):
         # print(prediction, label)
         if prediction > purchaseprice:
             total_profit += label - purchaseprice
+
+        if prediction < purchaseprice:
+            total_profit += purchaseprice - label
     return total_profit
 
 
 print(loss(weekPrediction, weektestloader))
-# print(positive_trading_profit(weekPrediction, weektestloader))
+print(positive_trading_profit(weekPrediction, weektestloader))
