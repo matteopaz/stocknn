@@ -7,7 +7,7 @@ from datastruct import *
 brkb_tr = helpers.load("./training/brkb_train_week.pkl")
 brkb_ts = helpers.load("./training/brkb_test_week.pkl")
 
-trainloader = DataLoader(brkb_tr, batch_size=100, drop_last=True)
+trainloader = DataLoader(brkb_tr, batch_size=64, drop_last=True)
 testloader = DataLoader(brkb_ts, batch_size=1, drop_last=True)
 
 
@@ -42,20 +42,20 @@ class LSTM1(nn.Module):
 
 
 shortmodel = LSTM1(input_size, hidden_size, 1, 1)
-print(shortmodel(brkb_tr[0][0].reshape(1, 8, 2)))
-print(shortmodel(brkb_tr[100][0].reshape(1, 8, 2)))
-print(shortmodel(brkb_tr[300][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[0][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[100][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[300][0].reshape(1, 8, 2)))
 
 loss = torch.nn.MSELoss()
-optimizer = torch.optim.Adam(shortmodel.parameters(), lr=0.01)
+optimizer = torch.optim.Adam(params=shortmodel.parameters(), lr=0.01)
 
-EPOCHS = 100
+EPOCHS = 15
 
 helpers.train(trainloader, shortmodel, optimizer, loss, EPOCHS, print_every=1)
 
 print("AFTER")
 
-print(shortmodel(brkb_tr[0][0].reshape(1, 8, 2)))
-print(shortmodel(brkb_tr[100][0].reshape(1, 8, 2)))
-print(shortmodel(brkb_tr[300][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[0][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[100][0].reshape(1, 8, 2)))
+# print(shortmodel(brkb_tr[300][0].reshape(1, 8, 2)))
 # torch.save(shortmodel.state_dict(), "./models/brkb_model_short.pt")

@@ -3,7 +3,7 @@ from torch.utils.data import Dataset, DataLoader
 import torch
 import numpy as np
 
-backmultiple = 1 # ############################# 
+backmultiple = 3 # ############################# 
 
 class SDataset(Dataset):
 
@@ -15,6 +15,7 @@ class SDataset(Dataset):
             close = list(raw["Close"])[i]
             pricerange = high - low
             self.ts.append([pricerange, close])
+        self.ts = self.ts[::-1]
 
         self.input_days = backmultiple * prediction_distance
         self.prediction_distance = prediction_distance
