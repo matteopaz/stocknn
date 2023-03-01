@@ -7,9 +7,8 @@ backmultiple = 3 # #############################
 
 class SDataset(Dataset):
 
-    def __init__(self, raw, prediction_distance, every=1):
+    def __init__(self, raw, prediction_distance, every=1, normp=lambda x: x, normr=lambda x: x):
         self.ts = []
-
         
         for i in range(len(raw)):
             high = list(raw["High"])[i]
@@ -21,7 +20,9 @@ class SDataset(Dataset):
         
         # normalize the data
         self.ts = np.array(self.ts)
-        self.ts = (self.ts - self.ts.min(axis=0)) / (self.ts.max(axis=0) - self.ts.min(axis=0))
+        for e in self.ts:
+            e[0] = normr(e[0])
+            e[1] = normp(e[1])
         self.ts = self.ts.tolist()
     
         self.ts = self.ts[::-1]

@@ -12,13 +12,16 @@ weektrainloader = DataLoader(weektrainset, batch_size=1, drop_last=True)
 
 
 naive = LSTM1(input_size, hidden_size, 1, 1)
-naive.cuda()
+
 
 weekPrediction = LSTM1(input_size, hidden_size, 1, 1)
 
-weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt"))
+weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt", map_location=torch.device('cpu')))
 weekPrediction.eval()
-weekPrediction.cuda()
+
+if torch.cuda.is_available():
+    naive.cuda()
+    weekPrediction.cuda()
 
 def loss(modelfn, testloader):
     total_loss = 0
@@ -53,8 +56,11 @@ naivey = []
 for batch in weektrainloader:
     x.append(i)
     i += 1
-    inp = batch[0].cuda()
+    inp = batch[0]
     label = batch[1]
+    if torch.cuda.is_available():
+        inp = inp.cuda()
+        label = label.cuda()
     out = weekPrediction(inp)
     naiveout = naive(inp)
     y.append(label.item())

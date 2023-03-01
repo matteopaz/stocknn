@@ -30,10 +30,14 @@ class LSTM1(nn.Module):
        
 
     def forward(self, x):
-        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size, dtype=torch.float32).requires_grad_().cuda()
-        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size, dtype=torch.float32).requires_grad_().cuda()
-        # x to cuda
-        x = x.cuda()
+        h0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size, dtype=torch.float32).requires_grad_()
+        c0 = torch.zeros(self.num_layers, x.size(0), self.hidden_size, dtype=torch.float32).requires_grad_()
+        if torch.cuda.is_available():
+            h0 = h0.cuda()
+            c0 = c0.cuda()
+            x = x.cuda()
+
+
         out, _ = self.lstm(x, (h0, c0))
         out = out[:, -1, :] # (batch, seq, hidden) -> (batch, hidden)
         out = self.fc(out)
@@ -42,7 +46,9 @@ class LSTM1(nn.Module):
 
 
 
-shortmodel = LSTM1(input_size, hidden_size, 1, 1).cuda()
+shortmodel = LSTM1(input_size, hidden_size, 1, 1)
+if torch.cuda.is_available():
+    shortmodel.cuda()
 # print(shortmodel(brkb_tr[0][0].reshape(1, 8, 2)))
 # print(shortmodel(brkb_tr[100][0].reshape(1, 8, 2)))
 # print(shortmodel(brkb_tr[300][0].reshape(1, 8, 2)))
