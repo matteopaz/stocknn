@@ -3,6 +3,7 @@ import torch
 from torch.utils.data import Dataset, DataLoader
 import helpers
 import numpy as np
+from parsedata import revnormp
 
 weektestset = helpers.load("./training/brkb_test_week.pkl")
 weektestloader = DataLoader(weektestset, batch_size=1, drop_last=True)
@@ -12,7 +13,7 @@ if torch.cuda.is_available():
     naive.cuda()
 weekPrediction = LSTM1(input_size, hidden_size, 1, 1)
 
-weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt", map_location=torch.device('cpu')))
+weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt"))
 weekPrediction.eval()
 if torch.cuda.is_available():
     weekPrediction.cuda()
@@ -30,20 +31,24 @@ def loss(modelfn, testloader):
     return total_loss
 
 def positive_trading_profit(modelfn, testloader):
-    total_profit = 0
+    rev = 0
+    cost = 0
+
     for batch in testloader:
         inp = batch[0]
         label = batch[1]
 
         purchaseprice = inp[0][-1][1]
         prediction = modelfn(inp)
-        # print(prediction, label)
-        if prediction > purchaseprice:
-            total_profit += label - purchaseprice
+        
 
-        # if prediction < purchaseprice:
-        #     total_profit += purchaseprice - label
-    return total_profit
+        if prediction > purchaseprice:
+            cost += revnormp(purchaseprice)
+            rev += revnormp(label)
+    
+    return (cost, rev, rev - cost)
+
+
 
 def mean_reversion(testloader):
     total_profit = 0
@@ -57,7 +62,7 @@ def mean_reversion(testloader):
         if today < mean:
             total_profit += label.item() - today
         
-    return total_profit
+    return revnormp(total_profit)
 
 def momentum(testloader):
     total_profit = 0
@@ -72,7 +77,7 @@ def momentum(testloader):
 
         if today > mean:
             total_profit += today - label.item()
-    return total_profit
+    return revnormp(total_profit)
 
 def justbuy(testloader):
     total_profit = 0
@@ -81,10 +86,14 @@ def justbuy(testloader):
         label = batch[1]
         today = inp[0][-1][1]
         total_profit += label.item() - today
-    return total_profit
+    return revnormp(total_profit)
 
-print(loss(weekPrediction, weektestloader))
-print("naive:", loss(naive, weektestloader))
+
+
+firstprice = list(weektestloader)[0][0][:, -1, 1].item()
+lastprice = list(weektestloader)[-1][1].item()
+chg = revnormp(lastprice - firstprice)
+print("change: ", chg)
 
 
 print(positive_trading_profit(weekPrediction, weektestloader))
