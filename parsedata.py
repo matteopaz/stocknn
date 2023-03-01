@@ -33,6 +33,15 @@ brkb_test = brkb[-LEAVEOUTFORTEST:]
 brkb_train_week = SDataset(brkb_train, 7, 1, normp, normr)
 brkb_test_week = SDataset(brkb_test, 7, 1, normp, normr)
 
+brkb_train_4month = SDataset(brkb_train, 120, 1, normp, normr)
+brkb_test_4month = SDataset(brkb_test, 120, 1, normp, normr)
+
+brkb_train_1year = SDataset(brkb_train, 365, 1, normp, normr)
+brkb_test_1year = SDataset(brkb_test, 365, 1, normp, normr)
 
 save(brkb_train_week, "./training/brkb_train_week.pkl")
 save(brkb_test_week, "./training/brkb_test_week.pkl")
+save(brkb_train_4month, "./training/brkb_train_4month.pkl")
+save(brkb_test_4month, "./training/brkb_test_4month.pkl")
+save(brkb_train_1year, "./training/brkb_train_1year.pkl")
+save(brkb_test_1year, "./training/brkb_test_1year.pkl")
