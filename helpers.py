@@ -11,9 +11,12 @@ def load(filename):
     with open(filename, "rb") as f:
         return pickle.load(f)
 
-def train(dataloader, model, optimizer, loss, epochs, print_every=100):
+def train(dataloader, model, optimizer, loss, epochs, print_every=100, plotting=False, metric=None):
     last_loss = 0
     first_loss =  0
+    x = range(epochs)
+    y_epochloss = []
+    y_metric = []
 
     for epoch in range(epochs):
         i = 0
@@ -39,5 +42,13 @@ def train(dataloader, model, optimizer, loss, epochs, print_every=100):
         if epoch % print_every == 0:
             print("Epoch: ", epoch, "Loss: ", epoch_loss, "Chg: ", epoch_loss - last_loss, "Net: ", epoch_loss - first_loss)
         
+        if plotting:
+            y_epochloss.append(epoch_loss)
+            if metric:
+                y_metric.append(metric(model))
+
         last_loss = epoch_loss
+    return x, y_epochloss, y_metric
+
+
         

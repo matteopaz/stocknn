@@ -23,7 +23,10 @@ minr = ranges.min()
 normp = lambda x: (x - minp) / (maxp - minp)
 normr = lambda x: (x - minr) / (maxr - minr)
 
+revnormp = lambda x: x * (maxp - minp) + minp
+revnormr = lambda x: x * (maxr - minr) + minr
 
+# maybe shuffle data and then split to randomize test data
 
 brkb_train = brkb[:-LEAVEOUTFORTEST]
 brkb_test = brkb[-LEAVEOUTFORTEST:]

@@ -7,6 +7,7 @@ import math
 
 weektrainset = helpers.load("./training/brkb_train_week.pkl")
 weektestset = helpers.load("./training/brkb_test_week.pkl")
+
 weektestloader = DataLoader(weektestset, batch_size=1, drop_last=True)
 weektrainloader = DataLoader(weektrainset, batch_size=1, drop_last=True)
 
