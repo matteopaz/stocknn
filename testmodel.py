@@ -1,4 +1,6 @@
-from brkb_short import LSTM1, input_size, hidden_size
+from brkb_short import input_size as input_size_s, hidden_size as hidden_size_s
+from model import LSTM1
+from brkb_medium import input_size as input_size_m, hidden_size as hidden_size_m
 import torch
 from torch.utils.data import Dataset, DataLoader
 import helpers
@@ -8,15 +10,22 @@ from parsedata import revnormp
 weektestset = helpers.load("./training/brkb_test_week.pkl")
 weektestloader = DataLoader(weektestset, batch_size=1, drop_last=True)
 
-naive = LSTM1(input_size, hidden_size, 1, 1)
-if torch.cuda.is_available():
-    naive.cuda()
-weekPrediction = LSTM1(input_size, hidden_size, 1, 1)
+monthtestset = helpers.load("./training/brkb_test_4month.pkl")
+monthtestloader = DataLoader(monthtestset, batch_size=1, drop_last=True)
 
-weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt"))
-weekPrediction.eval()
+# weekPrediction = LSTM1(input_size_s, hidden_size_s, 1, 1)
+
+# weekPrediction.load_state_dict(torch.load("./models/brkb_model_short.pt"))
+# weekPrediction.eval()
+
+fourmonthPrediction = LSTM1(input_size_m, hidden_size_m, 1, 1)
+fourmonthPrediction.load_state_dict(torch.load("./models/brkb_model_medium.pt"))
+fourmonthPrediction.eval()
+
 if torch.cuda.is_available():
     weekPrediction.cuda()
+    fourmonthPrediction.cuda()
+
 
 def loss(modelfn, testloader):
     total_loss = 0
@@ -86,6 +95,7 @@ def justbuy(testloader):
         label = batch[1]
         today = inp[0][-1][1]
         total_profit += label.item() - today
+        print(today, label.item(), label.item() - today)
     return revnormp(total_profit)
 
 
@@ -96,9 +106,14 @@ chg = revnormp(lastprice - firstprice)
 print("change: ", chg)
 
 
-print(positive_trading_profit(weekPrediction, weektestloader))
-# print("naive:", positive_trading_profit(naive, weektestloader))
-print("momentum: ", momentum(weektestloader))
-print("mean reversion:", mean_reversion(weektestloader))
+# print(positive_trading_profit(weekPrediction, weektestloader))
+# print("momentum: ", momentum(weektestloader))
+# print("mean reversion:", mean_reversion(weektestloader))
+# print("just buy:", justbuy(weektestloader))
+
+# print(positive_trading_profit(fourmonthPrediction, monthtestloader))
+# print("momentum: ", momentum(monthtestloader))
+# print("mean reversion:", mean_reversion(monthtestloader))
 print("just buy:", justbuy(weektestloader))
+
 

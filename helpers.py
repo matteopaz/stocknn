@@ -1,6 +1,7 @@
 import pickle
 from datastruct import *
 import math
+import torch
 
 def save(obj, filename):
     with open(filename, "wb") as f:

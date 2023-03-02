@@ -6,8 +6,8 @@ from datastruct import *
 import matplotlib.pyplot as plt
 from model import LSTM1
 
-brkb_tr = helpers.load("./training/brkb_train_week.pkl")
-brkb_ts = helpers.load("./training/brkb_test_week.pkl")
+brkb_tr = helpers.load("./training/brkb_train_4month.pkl")
+brkb_ts = helpers.load("./training/brkb_test_4month.pkl")
 
 trainloader = DataLoader(brkb_tr, batch_size=128, drop_last=True)
 testloader = DataLoader(brkb_ts, batch_size=1, drop_last=True)
@@ -16,9 +16,21 @@ testloader = DataLoader(brkb_ts, batch_size=1, drop_last=True)
 # hyperparams
 
 input_size = 2 # Daily vectors
-sequence_length = 57 # How many days input
-hidden_size = 16 # hidden layer features
 
+hidden_size = 8 # hidden layer features
+
+def lossmetric(modelfn):
+    total_loss = 0
+    for batch in testloader:
+        inp = batch[0]
+        label = batch[1].reshape(1, 1)
+        out = modelfn(inp)
+
+        lossval = (label.item() - out.item())**2
+
+        total_loss += lossval   
+
+    return total_loss
         
 loss = torch.nn.MSELoss()
 
@@ -28,11 +40,17 @@ optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
 if torch.cuda.is_available():
     model.cuda()
 
-# helpers.train(trainloader, model, optimizer, loss, 131, 10)
+# x, yl, ym = helpers.train(trainloader, model, optimizer, loss, 150, print_every=1)
 
 # torch.save(model.state_dict(), "./models/brkb_model_short.pt")
 
-# EPOCHS = 300
+# plt.plot(x, yl, label="loss")
+# plt.plot(x, ym, label="metric")
+# plt.legend()
+# plt.savefig("brkb_loss_metric_medium.png")
+# plt.show()
+
+
 
 # model1x8 = LSTM1(input_size, 8, 1, 1)
 # model1x16 = LSTM1(input_size, 16, 1, 1)
