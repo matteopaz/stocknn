@@ -9,7 +9,7 @@ from model import LSTM1
 brkb_tr = helpers.load("./training/brkb_train_week.pkl")
 brkb_ts = helpers.load("./training/brkb_test_week.pkl")
 
-trainloader = DataLoader(brkb_tr, batch_size=128, drop_last=True)
+trainloader = DataLoader(brkb_tr, batch_size=256, drop_last=True)
 testloader = DataLoader(brkb_ts, batch_size=1, drop_last=True)
 
 
@@ -28,9 +28,9 @@ optimizer = torch.optim.Adam(params=model.parameters(), lr=0.01)
 if torch.cuda.is_available():
     model.cuda()
 
-# helpers.train(trainloader, model, optimizer, loss, 131, 10)
+helpers.train(trainloader, model, optimizer, loss, 131, 1)
 
-# torch.save(model.state_dict(), "./models/brkb_model_short.pt")
+torch.save(model.state_dict(), "./models/brkb_model_short.pt")
 
 # EPOCHS = 300
 
